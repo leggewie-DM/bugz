@@ -1,0 +1,24 @@
+Source: bugz
+Section: misc
+Priority: optional
+Maintainer: Rolf Leggewie <foss@rolf.leggewie.biz>
+Uploaders: Debian Python Modules Team <python-modules-team@lists.alioth.debian.org>
+Build-Depends: debhelper (>= 5.0.38)
+Build-Depends-Indep: python-central (>= 0.5.6)
+XS-Python-Version: all
+Standards-Version: 3.8.0
+Homepage: http://www.liquidx.net/pybugz/
+Vcs-Svn: svn://svn.debian.org/python-modules/packages/bugz/trunk/
+Vcs-Browser: http://svn.debian.org/viewsvn/python-modules/packages/bugz/trunk/
+
+Package: bugz
+Architecture: all
+Depends: python, ${python:Depends}
+Provides: python-bugz
+XB-Python-Version: ${python:Versions}
+Description: command-line interface to Bugzilla
+ PyBugz is a Python and command line interface to Bugzilla, 
+ allowing the user to quickly search, isolate and contribute
+ to projects using the Bugzilla bug tracker.  Developers can
+ easily extract attachments and close bugs all from the
+ comfort of the command line.
