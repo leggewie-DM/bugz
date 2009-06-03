@@ -1,3 +1,9 @@
+bugz (0.7.3-1ubuntu1) karmic; urgency=low
+
+  * Add --install-layout=deb to setup.py install to fix FTBFS with Python 2.6.
+
+ -- Alessio Treglia <quadrispro@ubuntu.com>  Wed, 03 Jun 2009 10:19:13 +0200
+
 bugz (0.7.3-1) unstable; urgency=low
 
   * initial release. (Closes: #515092)
