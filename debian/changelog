@@ -1,3 +1,26 @@
+bugz (0.7.3-2) unstable; urgency=low
+
+  [ Jakub Wilk ]
+  * watch: Fix watch file.
+
+  [ Rolf Leggewie ]
+  * control: 
+    - enhance package description
+  * copyright: the package is released GPLv2 or later
+
+  [ Sandro Tosi ]
+  * debian/rules
+    - add --prefix=/usr to setup.py install, Python 2.6 installs by default in
+      /usr/local; thanks to Jakub Wilk for the report and to Jonathan Wiltshire
+      for the patch; Closes: #557791
+  * debian/control
+    - bump Standards-Version to 3.8.3 (no changes needed)
+    - replace 'python' with 'Python' in the long description
+  * debian/{docs, rules}
+    - install upstream changelog via dh_installchangelogs
+
+ -- Debian Python Modules Team <python-modules-team@lists.alioth.debian.org>  Wed, 09 Dec 2009 21:05:40 +0100
+
 bugz (0.7.3-1) unstable; urgency=low
 
   * initial release. (Closes: #515092)

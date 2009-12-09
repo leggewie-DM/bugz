@@ -6,7 +6,7 @@ Uploaders: Debian Python Modules Team <python-modules-team@lists.alioth.debian.o
 Build-Depends: debhelper (>= 5.0.38)
 Build-Depends-Indep: python-central (>= 0.5.6)
 XS-Python-Version: all
-Standards-Version: 3.8.0
+Standards-Version: 3.8.3
 Homepage: http://www.liquidx.net/pybugz/
 Vcs-Svn: svn://svn.debian.org/python-modules/packages/bugz/trunk/
 Vcs-Browser: http://svn.debian.org/viewsvn/python-modules/packages/bugz/trunk/
@@ -22,3 +22,6 @@ Description: command-line interface to Bugzilla
  to projects using the Bugzilla bug tracker.  Developers can
  easily extract attachments and close bugs all from the
  comfort of the command line.
+ .
+ This package provides both a fully-working CLI application
+ as well as a Python module to be reused by other projects.

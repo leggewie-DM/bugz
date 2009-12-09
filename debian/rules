@@ -16,7 +16,7 @@ install:
 	dh_testdir
 	dh_testroot
 	dh_clean -k 
-	python setup.py install --root=$(CURDIR)/debian/bugz/
+	python setup.py install --root=$(CURDIR)/debian/bugz/ --prefix=/usr
 	dh_install
 
 binary-indep: install
