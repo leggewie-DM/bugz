@@ -3,6 +3,7 @@ Section: misc
 Priority: optional
 Maintainer: Rolf Leggewie <foss@rolf.leggewie.biz>
 Uploaders: Debian Python Modules Team <python-modules-team@lists.alioth.debian.org>
+DM-Upload-Allowed: yes
 Build-Depends: debhelper (>= 5.0.38)
 Build-Depends-Indep: python-central (>= 0.5.6)
 XS-Python-Version: all
