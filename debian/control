@@ -6,14 +6,14 @@ Uploaders: Debian Python Modules Team <python-modules-team@lists.alioth.debian.o
 Build-Depends: debhelper (>= 5.0.38)
 Build-Depends-Indep: python-central (>= 0.5.6)
 XS-Python-Version: all
-Standards-Version: 3.8.3
+Standards-Version: 3.8.4
 Homepage: http://www.liquidx.net/pybugz/
 Vcs-Browser: http://git.debian.org/?p=collab-maint/bugz.git
 Vcs-Git: git://git.debian.org/collab-maint/bugz.git
 
 Package: bugz
 Architecture: all
-Depends: python, ${python:Depends}
+Depends: python, ${python:Depends}, ${misc:Depends}
 Provides: python-bugz
 XB-Python-Version: ${python:Versions}
 Description: command-line interface to Bugzilla
