@@ -8,8 +8,8 @@ Build-Depends-Indep: python-central (>= 0.5.6)
 XS-Python-Version: all
 Standards-Version: 3.8.3
 Homepage: http://www.liquidx.net/pybugz/
-Vcs-Svn: svn://svn.debian.org/python-modules/packages/bugz/trunk/
-Vcs-Browser: http://svn.debian.org/viewsvn/python-modules/packages/bugz/trunk/
+Vcs-Browser: http://git.debian.org/?p=collab-maint/bugz.git
+Vcs-Git: git://git.debian.org/collab-maint/bugz.git
 
 Package: bugz
 Architecture: all
