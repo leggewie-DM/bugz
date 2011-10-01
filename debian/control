@@ -13,7 +13,7 @@ Vcs-Git: git://git.debian.org/collab-maint/bugz.git
 
 Package: bugz
 Architecture: all
-Depends: python, ${python:Depends}, ${misc:Depends}
+Depends: python, python-argparse, ${python:Depends}, ${misc:Depends}
 Provides: python-bugz
 XB-Python-Version: ${python:Versions}
 Description: command-line interface to Bugzilla
