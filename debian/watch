@@ -1,3 +1,2 @@
 version=3
-opts="uversionmangle=s/_rc/~rc/" \
-http://googlecode.debian.net/p/pybugz/pybugz-(\d+.*)\.tar\.gz
+http://githubredir.debian.net/github/williamh/pybugz/ (.*).tar.gz
