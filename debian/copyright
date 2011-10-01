@@ -1,15 +1,21 @@
 This package was debianized by Rolf Leggewie <foss@rolf.leggewie.biz> on
 Sat, 21 Feb 2009 19:21:55 +0900.
 
-It was downloaded from http://code.google.com/p/pybugz/
+The latest upstream tarball was downloaded from https://github.com/williamh/pybugz
+on Saturday, Oct. 1st 2011.
 
 Upstream Authors:
 
     Alastair Tse <alastair@liquidx.net>
+    Santiago M. Mola <cooldwind@gmail.com>
+    William Hubbs <w.d.hubbs@gmail.com>
+    Ingmar Vanhassel <ingmar@exherbo.org>
 
 Copyright: 
 
     © 2006,2007 Alastair Tse
+    © 2009 Ingmar Vanhassel
+    © 2011 William Hubbs
 
 License:
 
