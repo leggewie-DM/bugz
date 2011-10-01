@@ -1,4 +1,3 @@
 version=3
 opts="uversionmangle=s/_rc/~rc/" \
-http://code.google.com/p/pybugz/downloads/list \
-http://pybugz.googlecode.com/files/pybugz-(.*)\.tar\.gz
+http://googlecode.debian.net/p/pybugz/pybugz-(\d+.*)\.tar\.gz
