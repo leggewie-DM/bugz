@@ -4,7 +4,7 @@ from bugz import __version__
 import csv
 import locale
 
-BUGZ_USER_AGENT = 'PyBugz/%s +http://www.github.com/ColdWind/pybugz/' % __version__
+BUGZ_USER_AGENT = 'PyBugz/%s +http://www.github.com/williamh/pybugz/' % __version__
 
 class BugzConfig:
 	urls = {
@@ -32,20 +32,11 @@ class BugzConfig:
 		'post': {
 		'product': '',
 		'version': 'unspecified',
-		'rep_platform': 'All',
-		'op_sys': 'Linux',
-		'priority': 'P2',
-		'bug_severity': 'normal',
-		'bug_status': 'NEW',
-		'assigned_to': '',
-		'keywords': '',
-		'dependson':'',
-		'blocked':'',
 		'component': '',
-		# needs to be filled in
-		'bug_file_loc': '',
 		'short_desc': '',
 		'comment': '',
+#		'rep_platform': 'All',
+#		'op_sys': 'Linux',
 		},
 
 		'attach': {
@@ -54,6 +45,7 @@ class BugzConfig:
 
 		'attach_post': {
 		'action': 'insert',
+		'ispatch': '',
 		'contenttypemethod': 'manual',
 		'bugid': '',
 		'description': '',
@@ -76,7 +68,9 @@ class BugzConfig:
 		'bug_file_loc': '',
 		'status_whiteboard_type': 'allwordssubstr',
 		'status_whiteboard': '',
-		'bug_status': ['NEW', 'ASSIGNED', 'REOPENED'],
+		# NEW, ASSIGNED and REOPENED is obsolete as of bugzilla 3.x and has
+		# been removed from bugs.gentoo.org on 2011/05/01
+		'bug_status': ['NEW', 'ASSIGNED', 'REOPENED', 'UNCONFIRMED', 'CONFIRMED', 'IN_PROGRESS'],
 		'bug_severity': [],
 		'priority': [],
 		'emaillongdesc1': '1',
@@ -142,8 +136,10 @@ class BugzConfig:
 	choices = {
 		'status': {
 		'unconfirmed': 'UNCONFIRMED',
+		'confirmed': 'CONFIRMED',
 		'new': 'NEW',
 		'assigned': 'ASSIGNED',
+		'in_progress': 'IN_PROGRESS',
 		'reopened': 'REOPENED',
 		'resolved': 'RESOLVED',
 		'verified': 'VERIFIED',
@@ -190,11 +186,15 @@ class BugzConfig:
 		'resolution': {
 		'fixed': 'FIXED',
 		'invalid': 'INVALID',
-		'duplicate': 'DUPLICATE',
-		'lated': 'LATER',
-		'needinfo': 'NEEDINFO',
 		'wontfix': 'WONTFIX',
+		'lated': 'LATER',
+		'remind': 'REMIND',
+		'worksforme': 'WORKSFORME',
+		'cantfix': 'CANTFIX',
+		'needinfo': 'NEEDINFO',
+		'test-request': 'TEST-REQUEST',
 		'upstream': 'UPSTREAM',
+		'duplicate': 'DUPLICATE',
 		},
 
 		'severity': [
@@ -209,11 +209,11 @@ class BugzConfig:
 		],
 
 		'priority': {
-		1:'P1',
-		2:'P2',
-		3:'P3',
-		4:'P4',
-		5:'P5',
+		1:'Highest',
+		2:'High',
+		3:'Normal',
+		4:'Low',
+		5:'Lowest',
 		}
 
 	}
