@@ -7,6 +7,7 @@ import locale
 import mimetypes
 import os
 import re
+import sys
 
 from cookielib import LWPCookieJar, CookieJar
 from cStringIO import StringIO
@@ -84,6 +85,8 @@ def get_content_type(filename):
 #
 # Override the behaviour of elementtree and allow us to
 # force the encoding to utf-8
+# Not needed in Python 2.7, since ElementTree.XMLTreeBuilder uses the forced
+# encoding.
 #
 
 class ForcedEncodingXMLTreeBuilder(ElementTree.XMLTreeBuilder):
@@ -171,7 +174,7 @@ class Bugz:
 						self.cookiejar.load()
 						self.cookiejar.clear()
 						self.cookiejar.save()
-						os.chmod(self.cookiejar.filename, 0700)
+						os.chmod(self.cookiejar.filename, 0600)
 					except IOError:
 						pass
 			except KeyError:
@@ -235,7 +238,7 @@ class Bugz:
 			base64string = base64.encodestring('%s:%s' % (self.httpuser, self.httppassword))[:-1]
 			req.add_header("Authorization", "Basic %s" % base64string)
 		resp = self.opener.open(req)
-		re_request_login = re.compile(r'<title>.*Log in to Bugzilla</title>')
+		re_request_login = re.compile(r'<title>.*Log in to .*</title>')
 		if not re_request_login.search(resp.read()):
 			self.log('Already logged in.')
 			self.authenticated = True
@@ -255,6 +258,8 @@ class Bugz:
 		qparams = config.params['auth'].copy()
 		qparams['Bugzilla_login'] = self.user
 		qparams['Bugzilla_password'] = self.password
+		if not self.forget:
+			qparams['Bugzilla_remember'] = 'on'
 
 		req_url = urljoin(self.base, config.urls['auth'])
 		req = Request(req_url, urlencode(qparams), config.headers)
@@ -266,7 +271,7 @@ class Bugz:
 			self.authenticated = True
 			if not self.forget:
 				self.cookiejar.save()
-				os.chmod(self.cookiejar.filename, 0700)
+				os.chmod(self.cookiejar.filename, 0600)
 			return True
 		else:
 			raise RuntimeError("Failed to login")
@@ -285,7 +290,7 @@ class Bugz:
 				self.log('Unknown field: ' + field)
 				columns.append(field)
 		for row in rows[1:]:
-			if row[0].find("Missing Search") != -1:
+			if "Missing Search" in row[0]:
 				self.log('Bugzilla error (Missing search found)')
 				return None
 			fields = {}
@@ -350,8 +355,10 @@ class Bugz:
 		qparams['order'] = config.choices['order'].get(order, 'Bug Number')
 		qparams['bug_severity'] = severity or []
 		qparams['priority'] = priority or []
-		if status == None:
-			qparams['bug_status'] = ['NEW', 'ASSIGNED', 'REOPENED']
+		if status is None:
+			# NEW, ASSIGNED and REOPENED is obsolete as of bugzilla 3.x and has
+			# been removed from bugs.gentoo.org on 2011/05/01
+			qparams['bug_status'] = ['NEW', 'ASSIGNED', 'REOPENED', 'UNCONFIRMED', 'CONFIRMED', 'IN_PROGRESS']
 		elif [s.upper() for s in status] == ['ALL']:
 			qparams['bug_status'] = config.choices['status']
 		else:
@@ -409,8 +416,8 @@ class Bugz:
 		req_url = urljoin(self.base, config.urls['list'])
 		req_url += '?' + req_params
 		req = Request(req_url, None, config.headers)
-		if self.user and self.hpassword:
-			base64string = base64.encodestring('%s:%s' % (self.user, self.hpassword))[:-1]
+		if self.user and self.password:
+			base64string = base64.encodestring('%s:%s' % (self.user, self.password))[:-1]
 			req.add_header("Authorization", "Basic %s" % base64string)
 		resp = self.opener.open(req)
 
@@ -439,12 +446,27 @@ class Bugz:
 			req.add_header("Authorization", "Basic %s" % base64string)
 		resp = self.opener.open(req)
 
-		fd = StringIO(resp.read())
+		data = resp.read()
+		# Get rid of control characters.
+		data = re.sub('[\x00-\x08\x0e-\x1f\x0b\x0c]', '', data)
+		fd = StringIO(data)
+
 		# workaround for ill-defined XML templates in bugzilla 2.20.2
-		parser = ForcedEncodingXMLTreeBuilder(encoding = 'utf-8')
+		(major_version, minor_version) = \
+		    (sys.version_info[0], sys.version_info[1])
+		if major_version > 2 or \
+			    (major_version == 2 and minor_version >= 7):
+			# If this is 2.7 or greater, then XMLTreeBuilder
+			# does what we want.
+			parser = ElementTree.XMLParser()
+		else:
+			# Running under Python 2.6, so we need to use our
+			# subclass of XMLTreeBuilder instead.
+			parser = ForcedEncodingXMLTreeBuilder(encoding = 'utf-8')
+
 		etree = ElementTree.parse(fd, parser)
 		bug = etree.find('.//bug')
-		if bug and bug.attrib.has_key('error'):
+		if bug is not None and bug.attrib.has_key('error'):
 			return None
 		else:
 			return etree
@@ -456,7 +478,8 @@ class Bugz:
 			add_cc = [], remove_cc = [],
 			add_dependson = [], remove_dependson = [],
 			add_blocked = [], remove_blocked = [],
-			whiteboard = None, keywords = None):
+			whiteboard = None, keywords = None,
+			component = None):
 		"""Modify an existing bug
 
 		@param bugid: bug id
@@ -496,6 +519,8 @@ class Bugz:
 		@type    whiteboard: string
 		@keyword keywords: set keywords
 		@type    keywords: string
+		@keyword component: set component
+		@type    component: string
 
 		@return: list of fields modified.
 		@rtype: list of strings
@@ -511,24 +536,28 @@ class Bugz:
 		modified = []
 		qparams = config.params['modify'].copy()
 		qparams['id'] = bugid
+		# NOTE: knob has been removed in bugzilla 4 and 3?
 		qparams['knob'] = 'none'
 
 		# copy existing fields
 		FIELDS = ('bug_file_loc', 'bug_severity', 'short_desc', 'bug_status',
-				'status_whiteboard', 'keywords',
+				'status_whiteboard', 'keywords', 'resolution',
 				'op_sys', 'priority', 'version', 'target_milestone',
-				'assigned_to', 'rep_platform', 'product', 'component')
+				'assigned_to', 'rep_platform', 'product', 'component', 'token')
 
 		FIELDS_MULTI = ('blocked', 'dependson')
 
 		for field in FIELDS:
 			try:
 				qparams[field] = buginfo.find('.//%s' % field).text
+				if qparams[field] is None:
+					del qparams[field]
 			except:
 				pass
 
 		for field in FIELDS_MULTI:
-			qparams[field] = [d.text for d in buginfo.findall('.//%s' % field)]
+			qparams[field] = [d.text for d in buginfo.findall('.//%s' % field)
+					if d is not None and d.text is not None]
 
 		# set 'knob' if we are change the status/resolution
 		# or trying to reassign bug.
@@ -537,28 +566,36 @@ class Bugz:
 		if resolution:
 			resolution = resolution.upper()
 
-		if status == 'RESOLVED' and status != qparams['bug_status']:
-			qparams['knob'] = 'resolve'
-			if resolution:
-				qparams['resolution'] = resolution
-			else:
-				qparams['resolution'] = 'FIXED'
+		if status and status != qparams['bug_status']:
+			# Bugzilla >= 3.x
+			qparams['bug_status'] = status
 
-			modified.append(('status', status))
-			modified.append(('resolution', qparams['resolution']))
-		elif status == 'ASSIGNED' and status != qparams['bug_status']:
-			qparams['knob'] = 'accept'
-			modified.append(('status', status))
-		elif status == 'REOPENED' and status != qparams['bug_status']:
-			qparams['knob'] = 'reopen'
-			modified.append(('status', status))
-		elif status == 'VERIFIED' and status != qparams['bug_status']:
-			qparams['knob'] = 'verified'
-			modified.append(('status', status))
-		elif status == 'CLOSED' and status != qparams['bug_status']:
-			qparams['knob'] = 'closed'
-			modified.append(('status', status))
+			if status == 'RESOLVED':
+				qparams['knob'] = 'resolve'
+				if resolution:
+					qparams['resolution'] = resolution
+				else:
+					qparams['resolution'] = 'FIXED'
+
+				modified.append(('status', status))
+				modified.append(('resolution', qparams['resolution']))
+			elif status == 'ASSIGNED' or status == 'IN_PROGRESS':
+				qparams['knob'] = 'accept'
+				modified.append(('status', status))
+			elif status == 'REOPENED':
+				qparams['knob'] = 'reopen'
+				modified.append(('status', status))
+			elif status == 'VERIFIED':
+				qparams['knob'] = 'verified'
+				modified.append(('status', status))
+			elif status == 'CLOSED':
+				qparams['knob'] = 'closed'
+				modified.append(('status', status))
 		elif duplicate:
+			# Bugzilla >= 3.x
+			qparams['bug_status'] = "RESOLVED"
+			qparams['resolution'] = "DUPLICATE"
+
 			qparams['knob'] = 'duplicate'
 			qparams['dup_id'] = duplicate
 			modified.append(('status', 'RESOLVED'))
@@ -575,21 +612,21 @@ class Bugz:
 		if title:
 			qparams['short_desc'] = title or ''
 			modified.append(('title', title))
-		if url != None:
+		if url is not None:
 			qparams['bug_file_loc'] = url
 			modified.append(('url', url))
-		if severity != None:
+		if severity is not None:
 			qparams['bug_severity'] = severity
 			modified.append(('severity', severity))
-		if priority != None:
+		if priority is not None:
 			qparams['priority'] = priority
 			modified.append(('priority', priority))
 
 		# cc manipulation
-		if add_cc != None:
+		if add_cc is not None:
 			qparams['newcc'] = ', '.join(add_cc)
 			modified.append(('newcc', qparams['newcc']))
-		if remove_cc != None:
+		if remove_cc is not None:
 			qparams['cc'] = remove_cc
 			qparams['removecc'] = 'on'
 			modified.append(('cc', remove_cc))
@@ -621,12 +658,15 @@ class Bugz:
 		if changed_blocked:
 			modified.append(('blocked', qparams['blocked']))
 
-		if whiteboard != None:
+		if whiteboard is not None:
 			qparams['status_whiteboard'] = whiteboard
 			modified.append(('status_whiteboard', whiteboard))
-		if keywords != None:
+		if keywords is not None:
 			qparams['keywords'] = keywords
 			modified.append(('keywords', keywords))
+		if component is not None:
+			qparams['component'] = component
+			modified.append(('component', component))
 
 		req_params = urlencode(qparams, True)
 		req_url = urljoin(self.base, config.urls['modify'])
@@ -637,6 +677,11 @@ class Bugz:
 
 		try:
 			resp = self.opener.open(req)
+			re_error = re.compile(r'id="error_msg".*>([^<]+)<')
+			error = re_error.search(resp.read())
+			if error:
+				print error.group(1)
+				return []
 			return modified
 		except:
 			return []
@@ -726,7 +771,7 @@ class Bugz:
 		if version != '':
 			qparams['version'] = version
 
-		#XXX: default priority is 'P2'
+		#XXX: default priority is 'Normal'
 		if priority != '':
 			qparams['priority'] = priority
 
@@ -743,7 +788,7 @@ class Bugz:
 		resp = self.opener.open(req)
 
 		try:
-			re_bug = re.compile(r'<title>.*Bug ([0-9]+) Submitted</title>')
+			re_bug = re.compile(r'(?:\s+)?<title>.*Bug ([0-9]+) Submitted.*</title>')
 			bug_match = re_bug.search(resp.read())
 			if bug_match:
 				return int(bug_match.group(1))
@@ -753,7 +798,7 @@ class Bugz:
 		return 0
 
 	def attach(self, bugid, title, description, filename,
-			content_type = 'text/plain'):
+			content_type = 'text/plain', ispatch = False):
 		"""Attach a file to a bug.
 
 		@param bugid: bug id
@@ -777,7 +822,11 @@ class Bugz:
 		qparams['bugid'] = bugid
 		qparams['description'] = title
 		qparams['comment'] = description
-		qparams['contenttypeentry'] = content_type
+		if ispatch:
+			qparams['ispatch'] = '1'
+			qparams['contenttypeentry'] = 'text/plain'
+		else:
+			qparams['contenttypeentry'] = content_type
 
 		filedata = [('data', filename, open(filename).read())]
 		content_type, body = encode_multipart_formdata(qparams.items(),
@@ -795,9 +844,18 @@ class Bugz:
 
 		# TODO: return attachment id and success?
 		try:
-			re_success = re.compile(r'<title>Changes Submitted</title>')
-			if re_success.search(resp.read()):
-				return True
+			re_attach = re.compile(r'<title>(.+)</title>')
+			# Bugzilla 3/4
+			re_attach34 = re.compile(r'Attachment \d+ added to Bug \d+')
+			response = resp.read()
+			attach_match = re_attach.search(response)
+			if attach_match:
+				if attach_match.group(1) == "Changes Submitted" or re_attach34.match(attach_match.group(1)):
+					return True
+				else:
+					return attach_match.group(1)
+			else:
+				return False
 		except:
 			pass
 
