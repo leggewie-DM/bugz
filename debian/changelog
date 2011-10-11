@@ -1,3 +1,32 @@
+bugz (0.9.3-1) unstable; urgency=low
+
+  * new upstream upstream release 0.9.3. Closes: #638657
+    - debian/install: location of bugz script in upstream tarball changed
+    - debian/copyright: update to latest status
+    - debian/docs:
+      + ship new file bugzrc.example in docs package
+      + ship shell completions contrib folder as docs
+        and install a link to /etc for bash completion to become functional
+    - debian/control: add newly required python-argparse to run-time deps
+    - debian/manpages: ship newly-provided upstream manpage. Closes: #530154
+  * use rules.tiny logic from debhelper 7
+    - update debian/compat to compatibility version 7
+    - debian/control:
+      + depend on debhelper 7 or later
+      + drop specification for XS-Python-Version,
+        dh7 now picks this up automatically at build-time
+      + drop deprecated python-central from build dependencies
+  * debian/control:
+    - set DMUA
+    - move Vcs to git
+    - bump policy to 3.9.2
+    - add ${misc:Depends} to run-time dependencies
+  * switch to DebSrc3.0. Closes: #600609
+  * debian/watch: upstream download location changed to github
+  * debian/dirs: drop unnecessary file. dirs get created as needed.
+
+ -- Rolf Leggewie <foss@rolf.leggewie.biz>  Tue, 11 Oct 2011 18:04:44 +0800
+
 bugz (0.7.3-2) unstable; urgency=low
 
   [ Jakub Wilk ]
