@@ -14,7 +14,6 @@ Package: bugz
 Architecture: all
 Depends: python (>= 2.7) | python-argparse, ${python:Depends}, ${misc:Depends}
 Provides: python-bugz
-XB-Python-Version: ${python:Versions}
 Description: command-line interface to Bugzilla
  PyBugz is a Python and command line interface to Bugzilla, 
  allowing the user to quickly search, isolate and contribute
