@@ -1,3 +1,13 @@
+bugz (0.9.3-2) unstable; urgency=low
+
+  * debian/control:
+    - add python to build-time dependencies. Closes: #652341
+    - relax run-time dependencies. Closes: #653652
+      python 2.7 already provides the functionality of python-argparse
+  * use dh_python2 to build the package when available. Closes: #616750
+
+ -- Rolf Leggewie <foss@rolf.leggewie.biz>  Sat, 07 Jan 2012 13:38:51 +0800
+
 bugz (0.9.3-1) unstable; urgency=low
 
   * new upstream upstream release 0.9.3. Closes: #638657
