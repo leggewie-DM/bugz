@@ -5,7 +5,7 @@ Maintainer: Rolf Leggewie <foss@rolf.leggewie.biz>
 Uploaders: Debian Python Modules Team <python-modules-team@lists.alioth.debian.org>
 DM-Upload-Allowed: yes
 Build-Depends: debhelper (>= 7), python
-Standards-Version: 3.9.2
+Standards-Version: 3.9.3
 Homepage: http://www.liquidx.net/pybugz/
 Vcs-Browser: http://git.debian.org/?p=collab-maint/bugz.git
 Vcs-Git: git://git.debian.org/collab-maint/bugz.git
