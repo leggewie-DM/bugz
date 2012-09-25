@@ -10,9 +10,6 @@ _bugz() {
     '(-b --base)'{-b,--base}'[bugzilla base URL]:bugzilla url: '
     '(-u --user)'{-u,--user}'[user name (if required)]:user name:_users'
     '(-p --password)'{-p,--password}'[password (if required)]:password: '
-    '(-H --httpuser)'{-H,--httpuser}'[basic http auth user name (if required)]:user name:_users'
-    '(-P --httppassword)'{-P,--httppassword}'[basic http auth password (if required)]:password: '
-    '(-f --forget)'{-f,--forget}'[do not remember authentication]'
     '--columns[number of columns to use when displaying output]:number: '
     '--skip-auth[do not authenticate]'
     '(-q --quiet)'{-q,--quiet}'[do not display status messages]'
@@ -23,7 +20,6 @@ _bugz() {
     'get:get a bug from bugzilla'
     'help:display subcommands'
     'modify:modify a bug (eg. post a comment)'
-    'namedcmd:run a stored search'
     'post:post a new bug into bugzilla'
     'search:search for bugs in bugzilla'
   )
@@ -54,7 +50,9 @@ _bugz_cmd_attach()
 {
   _arguments -s : \
     '(--content_type= -c)'{--content_type=,-c}'[mimetype of the file]:MIME-Type:_mime_types' \
-    '(--description= -d)'{--description=,-d}'[a description of the attachment]:description: ' \
+    '(--title= -t)'{--title=,-t}'[a short description of the attachment]:title: ' \
+    '(--description= -d)'{--description=,-d}'[a long description of the attachment]:description: ' \
+    '(--bigfile)'{--bigfile}'[the attachment is a big file]:bigfile: ' \
     '--help[show help message and exit]'
 }
 
@@ -103,14 +101,6 @@ _bugz_cmd_modify()
     '(--whiteboard= -w)'{--whiteboard=,-w}'[set status whiteboard]:status whiteboard: '
 }
 
-(( ${+functions[_bugz_cmd_namedcmd]} )) ||
-_bugz_cmd_namedcmd()
-{
-  _arguments -s : \
-    '--show-status[show bug status]'
-    '--show-url[show bug ID as url]'
-}
-
 (( ${+functions[_bugz_cmd_post]} )) ||
 _bugz_cmd_post()
 {
@@ -145,7 +135,6 @@ _bugz_cmd_search()
     '(--keywords= -k)'{--keywords=,-k}'[bug keywords]:keywords: ' \
     '--severity=[restrict by severity]:severity: ' \
     '--show-status[show bug status]' \
-    '--show-url[show bug ID as url]' \
     '(--status= -s)'{--status=,-s}'[bug status]:status: ' \
     '(--order= -o)'{--order=,-o}'[sort by]:order:((number\:"bug number" assignee\:"assignee field" importance\:"importance field" date\:"last changed"))' \
     '--priority=[restrict by priority]:priority: ' \
