@@ -1,3 +1,11 @@
+bugz (0.10.1-1) experimental; urgency=low
+
+  * new upstream release
+  * update my copyright to 2012
+  * update to 3.9.3 standard, no further changes
+
+ -- Rolf Leggewie <foss@rolf.leggewie.biz>  Tue, 25 Sep 2012 23:59:41 +0800
+
 bugz (0.9.3-2) unstable; urgency=low
 
   * debian/control:
