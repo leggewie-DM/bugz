@@ -1,1 +1,2 @@
-usr/share/doc/bugz/contrib/bash-completion etc/bash-completion.d/bugz
+usr/share/doc/bugz/contrib/bash-completion etc/bash_completion.d/bugz
+usr/share/doc/bugz/contrib/zsh-completion usr/share/zsh/vendor-completions/_bugz
