@@ -1,3 +1,10 @@
+bugz (0.10.1-2) experimental; urgency=low
+
+  * install shell completion files in the proper places. Closes: #688975
+  * do not compress zsh completion file
+
+ -- Rolf Leggewie <foss@rolf.leggewie.biz>  Sun, 30 Sep 2012 23:51:49 +0200
+
 bugz (0.10.1-1) experimental; urgency=low
 
   * new upstream release
