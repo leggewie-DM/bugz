@@ -3,7 +3,6 @@ Section: misc
 Priority: optional
 Maintainer: Rolf Leggewie <foss@rolf.leggewie.biz>
 Uploaders: Debian Python Modules Team <python-modules-team@lists.alioth.debian.org>
-DM-Upload-Allowed: yes
 Build-Depends: debhelper (>= 7.0.50~), python
 Standards-Version: 3.9.3
 Homepage: http://www.liquidx.net/pybugz/
