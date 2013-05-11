@@ -1,3 +1,13 @@
+bugz (0.10.1-3) unstable; urgency=low
+
+  * bump build process to dh9
+  * control:
+    - drop obsolete DMUA field
+    - bump policy to 3.9.4
+  * copyright: bump my copyright claim to 2013
+
+ -- Rolf Leggewie <foss@rolf.leggewie.biz>  Sat, 11 May 2013 18:54:45 +0800
+
 bugz (0.10.1-2) experimental; urgency=low
 
   * install shell completion files in the proper places. Closes: #688975
