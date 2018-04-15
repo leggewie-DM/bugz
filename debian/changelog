@@ -1,3 +1,11 @@
+bugz (0.10.1-4) unstable; urgency=medium
+
+  * watch: update to version 4
+  * control: update git URIs
+  * copyright: update to 2018
+
+ -- Rolf Leggewie <foss@rolf.leggewie.biz>  Sun, 15 Apr 2018 14:23:07 +0800
+
 bugz (0.10.1-3) unstable; urgency=low
 
   * bump build process to dh9
