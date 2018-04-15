@@ -6,8 +6,8 @@ Uploaders: Debian Python Modules Team <python-modules-team@lists.alioth.debian.o
 Build-Depends: debhelper (>= 9), python
 Standards-Version: 3.9.4
 Homepage: http://www.liquidx.net/pybugz/
-Vcs-Browser: http://git.debian.org/?p=collab-maint/bugz.git
-Vcs-Git: git://git.debian.org/collab-maint/bugz.git
+Vcs-Browser: https://github.com/leggewie/pkg-bugz
+Vcs-Git: git@github.com:leggewie/pkg-bugz.git
 
 Package: bugz
 Architecture: all
